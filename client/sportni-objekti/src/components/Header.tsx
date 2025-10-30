@@ -9,8 +9,14 @@ export default function Header() {
       <Link to="/" className="text-xl font-semibold text-gray-800">RRIS</Link>
       <nav className="space-x-4 flex items-center">
         <Link to="/" className="text-sm text-gray-600 hover:text-gray-800">Home</Link>
-        {!user && <Link to="/auth" className="text-sm text-gray-600 hover:text-gray-800">Prijava</Link>}
-        <a href="#" className="text-sm text-gray-600 hover:text-gray-800">Rezervacije</a>
+        {user ? (
+          <>
+            <Link to="/manage" className="text-sm text-gray-600 hover:text-gray-800">Upravljanje</Link>
+            <a href="#" className="text-sm text-gray-600 hover:text-gray-800">Rezervacije</a>
+          </>
+        ) : (
+          <Link to="/auth" className="text-sm text-gray-600 hover:text-gray-800">Prijava</Link>
+        )}
 
         {user && (
           <div className="ml-4 flex items-center gap-3">

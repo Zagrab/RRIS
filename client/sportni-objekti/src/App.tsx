@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
+import ManageObjects from './pages/ManageObjects'
 import NotFound from './pages/NotFound'
 import { AuthProvider } from './lib/AuthProvider'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -18,6 +19,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage"
+              element={
+                <ProtectedRoute>
+                  <ManageObjects />
                 </ProtectedRoute>
               }
             />
