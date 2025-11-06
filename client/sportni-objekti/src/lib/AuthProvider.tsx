@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           localStorage.setItem(SESSION_EXPIRES_KEY, String(expiresAt))
         } catch (e) {
-          // ignore
+          console.warn('Error saving session expiry', e)
         }
         scheduleSignOut(SESSION_TTL_MS)
       } else {
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false
-      ;(subscription as any)?.subscription?.unsubscribe?.()
+      subscription?.subscription?.unsubscribe?.()
       clearExpiry()
     }
   }, [])
@@ -119,4 +119,3 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     </AuthContext.Provider>
   )
 }
-
