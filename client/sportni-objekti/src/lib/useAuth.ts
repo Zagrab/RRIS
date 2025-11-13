@@ -15,6 +15,7 @@ export default function useAuth() {
 
   // Fallback: previously-used behavior if not wrapped in provider
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
     let mounted = true
@@ -26,6 +27,8 @@ export default function useAuth() {
         setUser(data?.user ?? null)
       } catch (err) {
         console.warn('Error fetching supabase user', err)
+      } finally {
+        setInitializing(false)
       }
     }
 
@@ -33,6 +36,7 @@ export default function useAuth() {
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      setInitializing(false)
     })
 
     return () => {
@@ -51,5 +55,5 @@ export default function useAuth() {
     }
   }, [])
 
-  return { user, signOut }
+  return { user, signOut, initializing }
 }

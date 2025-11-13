@@ -53,49 +53,45 @@ export default function ManageObjects() {
   };
   const [weekAvailability, setWeekAvailability] = useState<Record<DayKey, DayAvailability>>(defaultWeekAvailability);
 
+  // Fetch objects and count (exposed so we can re-use after mutations)
+  const fetchObjects = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const userId = user?.id;
+    if (!userId) return;
+
+    const { data, error } = await supabase
+      .from('sportni_objekti')
+      .select('*')
+      .eq('created_by', userId);
+
+    if (error) {
+      console.error('Error fetching objects:', error);
+    } else {
+      setObjects(data as SportniObjekt[]);
+    }
+  };
+
+  const fetchObjectCount = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const userId = user?.id;
+    if (!userId) return;
+
+    const { count, error } = await supabase
+      .from('sportni_objekti')
+      .select('*', { count: 'exact' })
+      .eq('created_by', userId);
+
+    if (error) return console.error('Error fetching object count:', error);
+    setObjectCount(count || 0);
+  };
+
   useEffect(() => {
-    const fetchObjects = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      const userId = user?.id; // Fetch user ID from auth metadata
-
-      if (userId) {
-        const { data, error } = await supabase
-          .from('sportni_objekti')
-          .select('*')
-          .eq('created_by', userId); // Filter objects by user ID
-
-        if (error) {
-          console.error('Error fetching objects:', error);
-        } else {
-          setObjects(data as SportniObjekt[]); // Explicitly cast data to SportniObjekt[]
-        }
-      }
-    };
-
-    const fetchObjectCount = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      const userId = user?.id; // Fetch user ID from auth metadata
-
-      if (userId) {
-        const { count, error } = await supabase
-          .from('sportni_objekti')
-          .select('*', { count: 'exact' })
-          .eq('created_by', userId); // Count objects by user ID
-
-        if (error) {
-          console.error('Error fetching object count:', error);
-        } else {
-          setObjectCount(count || 0); // Set the count state
-        }
-      }
-    };
-
     fetchObjects();
     fetchObjectCount();
   }, []);
@@ -276,7 +272,9 @@ export default function ManageObjects() {
         status: 'active',
       });
       setShowAddForm(false); // Hide the form after successful submission
-      window.location.reload(); // Refresh the page to show the new object
+      // refresh local list instead of full page reload
+      await fetchObjects();
+      await fetchObjectCount();
     }
   };
 
@@ -370,7 +368,9 @@ export default function ManageObjects() {
                         alert('Failed to delete object. Please try again.');
                       } else {
                         alert('Object deleted successfully!');
-                        window.location.reload();
+                        // update local state without navigating away
+                        await fetchObjects();
+                        await fetchObjectCount();
                       }
                     }}
                   >

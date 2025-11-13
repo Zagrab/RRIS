@@ -9,6 +9,7 @@ export type AuthUser = {
 type AuthContextValue = {
   user: AuthUser | null
   signOut: () => Promise<void>
+  initializing: boolean
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -18,6 +19,7 @@ const SESSION_TTL_MS = 30 * 60 * 1000 // 30 minutes
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [initializing, setInitializing] = useState(true)
   const timeoutRef = useRef<number | null>(null)
 
   // helper to clear expiry
@@ -43,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setUser(null)
       clearExpiry()
+      setInitializing(false)
     }, msFromNow)
   }
 
@@ -55,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setUser(null)
       clearExpiry()
+      setInitializing(false)
     }
   }
 
@@ -83,6 +87,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (err) {
         console.warn('Error fetching supabase user', err)
+      } finally {
+        // mark initialization done regardless of success
+        setInitializing(false)
       }
     }
 
@@ -101,8 +108,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.warn('Error saving session expiry', e)
         }
         scheduleSignOut(SESSION_TTL_MS)
+        setInitializing(false)
       } else {
         clearExpiry()
+        setInitializing(false)
       }
     })
 
@@ -114,7 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, signOut }}>
+    <AuthContext.Provider value={{ user, signOut, initializing }}>
       {children}
     </AuthContext.Provider>
   )
