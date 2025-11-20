@@ -455,7 +455,19 @@ export default function Reservations() {
                  )}
 
                  <div className="mt-4 flex items-center gap-3">
-                   <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={bookSelectedSlot}>Rezerviraj izbrani termin</button>
+                   <button
+                     className="px-4 py-2 bg-green-600 text-white rounded"
+                     onClick={() => {
+                       if (!selectedSlotId) {
+                         setOperationMsg('Izberite termin.')
+                         return
+                       }
+                       // navigate to payment page with objectId and slotId
+                       navigate(`/payment?objectId=${encodeURIComponent(selectedObjectId ?? '')}&slotId=${encodeURIComponent(selectedSlotId)}`)
+                     }}
+                   >
+                     Plačaj (dummy)
+                   </button>
                    <div className="text-sm text-gray-500">{operationMsg}</div>
                  </div>
                </div>

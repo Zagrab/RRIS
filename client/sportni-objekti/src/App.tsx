@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Auth from './pages/Auth'
 import ManageObjects from './pages/ManageObjects'
 import Reservations from './pages/Reservations'
+import Payment from './pages/Payment'
 import NotFound from './pages/NotFound'
 import { AuthProvider } from './lib/AuthProvider'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -24,6 +25,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Reservations />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <Payment />
                 </ProtectedRoute>
               }
             />
