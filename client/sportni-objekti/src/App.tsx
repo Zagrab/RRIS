@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
 import ManageObjects from './pages/ManageObjects'
+import Reservations from './pages/Reservations'
 import NotFound from './pages/NotFound'
 import { AuthProvider } from './lib/AuthProvider'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -14,14 +15,20 @@ export default function App() {
       <BrowserRouter>
         <Layout>
           <Routes>
+            {/* public landing page */}
+            <Route path="/" element={<Home />} />
+
+            {/* reservations - requires auth */}
             <Route
-              path="/"
+              path="/reservations"
               element={
                 <ProtectedRoute>
-                  <Home />
+                  <Reservations />
                 </ProtectedRoute>
               }
             />
+
+            {/* management pages still require auth */}
             <Route
               path="/manage"
               element={

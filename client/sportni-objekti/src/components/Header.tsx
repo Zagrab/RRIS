@@ -12,7 +12,7 @@ export default function Header() {
         {user ? (
           <>
             <Link to="/manage" className="text-sm text-gray-600 hover:text-gray-800">Upravljanje</Link>
-            <a href="#" className="text-sm text-gray-600 hover:text-gray-800">Rezervacije</a>
+            <Link to="/reservations" className="text-sm text-gray-600 hover:text-gray-800">Rezervacije</Link>
           </>
         ) : (
           <Link to="/auth" className="text-sm text-gray-600 hover:text-gray-800">Prijava</Link>
